@@ -1,0 +1,149 @@
+/* ===== GLOBAL RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #0f0f0f, #001a1a);
+  color: #00ffcc;
+  overflow-x: hidden;
+}
+
+/* ===== NAVBAR ===== */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 10%;
+  backdrop-filter: blur(15px);
+  background: rgba(0, 255, 204, 0.05);
+  border-bottom: 1px solid rgba(0,255,204,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+nav h2 {
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 25px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #00ffcc;
+  transition: 0.3s;
+}
+
+nav ul li a:hover {
+  color: #ffffff;
+  text-shadow: 0 0 10px #00ffcc;
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  text-shadow: 0 0 15px #00ffcc;
+  animation: glow 2s infinite alternate;
+}
+
+.hero p {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+/* ===== BUTTON STYLE ===== */
+.btn {
+  margin-top: 30px;
+  padding: 12px 30px;
+  border-radius: 30px;
+  border: 2px solid #00ffcc;
+  background: transparent;
+  color: #00ffcc;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.btn:hover {
+  background: #00ffcc;
+  color: #000;
+  box-shadow: 0 0 20px #00ffcc;
+}
+
+/* ===== CARD SECTION ===== */
+.section {
+  padding: 100px 10%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 30px;
+  transition: 0.4s;
+  border: 1px solid rgba(0,255,204,0.2);
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 0 25px rgba(0,255,204,0.5);
+}
+
+.card h3 {
+  margin-bottom: 15px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  padding: 40px;
+  background: #000;
+  margin-top: 80px;
+  border-top: 1px solid rgba(0,255,204,0.2);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #00ffcc;
+  }
+  to {
+    text-shadow: 0 0 25px #00ffcc, 0 0 40px #00ffaa;
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+
+  nav {
+    padding: 15px 5%;
+  }
+}
