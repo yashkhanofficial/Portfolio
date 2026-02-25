@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberTech Hub | Advanced Security Resources</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Orbitron', sans-serif;
+}
+
+body{
+    background: #0f0f0f;
+    color:#00ffcc;
+    overflow-x:hidden;
+}
+
+header{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    background: linear-gradient(135deg,#000000,#001f1f);
+}
+
+h1{
+    font-size:3rem;
+}
+
+.typing{
+    margin-top:20px;
+    font-size:1.2rem;
+    border-right:2px solid #00ffcc;
+    white-space:nowrap;
+    overflow:hidden;
+}
+
+section{
+    padding:80px 10%;
+}
+
+.card-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:30px;
+}
+
+.card{
+    background:#111;
+    padding:25px;
+    border-radius:15px;
+    transition:0.4s;
+    border:1px solid #00ffcc33;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 0 20px #00ffcc55;
+}
+
+.stats{
+    display:flex;
+    justify-content:space-around;
+    text-align:center;
+    margin-top:50px;
+}
+
+.counter{
+    font-size:2rem;
+    font-weight:bold;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    background:#000;
+    color:#777;
+}
+button{
+    margin-top:25px;
+    padding:10px 20px;
+    border:none;
+    background:#00ffcc;
+    color:#000;
+    cursor:pointer;
+    border-radius:5px;
+}
+button:hover{
+    background:#00ffaa;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>CyberTech Hub</h1>
+    <div class="typing" id="typing"></div>
+    <button onclick="scrollToSection()">Explore Resources</button>
+</header>
+
+<section id="resources">
+    <h2>🔐 Security Resources</h2>
+    <div class="card-container">
+        <div class="card">
+            <h3>Network Security</h3>
+            <p>Learn modern firewall systems, VPN security and encrypted communication.</p>
+        </div>
+        <div class="card">
+            <h3>Web Protection</h3>
+            <p>Understand secure coding practices and vulnerability prevention techniques.</p>
+        </div>
+        <div class="card">
+            <h3>Digital Privacy</h3>
+            <p>Protect identity and secure personal data with advanced encryption methods.</p>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div>
+            <div class="counter" data-target="150">0</div>
+            <p>Tools Listed</p>
+        </div>
+        <div>
+            <div class="counter" data-target="5000">0</div>
+            <p>Users Inspired</p>
+        </div>
+        <div>
+            <div class="counter" data-target="24">0</div>
+            <p>Resources Updated</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    © 2026 CyberTech Hub | Built with Advanced Web Technology
+</footer>
+
+<script>
+
+// Smooth scroll
+function scrollToSection(){
+    document.getElementById("resources").scrollIntoView({behavior:"smooth"});
+}
+
+// Typing effect
+const text = "Advanced Security • Free Tools • Digital Awareness";
+let index = 0;
+function typeEffect(){
+    if(index < text.length){
+        document.getElementById("typing").innerHTML += text.charAt(index);
+        index++;
+        setTimeout(typeEffect,50);
+    }
+}
+typeEffect();
+
+// Counter animation
+const counters = document.querySelectorAll('.counter');
+counters.forEach(counter=>{
+    counter.innerText = '0';
+    const updateCounter = ()=>{
+        const target = +counter.getAttribute('data-target');
+        const c = +counter.innerText;
+        const increment = target / 200;
+        if(c < target){
+            counter.innerText = `${Math.ceil(c + increment)}`;
+            setTimeout(updateCounter,15);
+        }else{
+            counter.innerText = target;
+        }
+    };
+    updateCounter();
+});
+
+</script>
+
+</body>
+  </html>
